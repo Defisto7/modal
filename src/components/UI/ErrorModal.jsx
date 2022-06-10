@@ -1,13 +1,16 @@
-import React from 'react'
-import Button from './Button'
-import Card from './Card'
+import React, {Fragment} from 'react';
+import ReactDOM from 'react-dom'
+import Button from './Button';
+import Card from './Card';
 import s from './ErrorModal.module.css';
 
-export default function ErrorModal(props) {
+const Backdrop = props => {
+  return <div className={s.backdrop} onClick={props.onConfirm}/>
+}
+
+const ModalOverlay = (props) => {
   return (
-    <div>
-      <div className={s.backdrop} onClick={props.onConfirm}/>
-      <Card className={s.modal}>
+    <Card className={s.modal}>
         <header className={s.header}>
           <h2>{props.title}</h2>
         </header>
@@ -18,6 +21,14 @@ export default function ErrorModal(props) {
           <Button onClick={props.onConfirm}>Okay</Button>
         </footer>
       </Card>
-    </div>
+  )
+}
+
+export default function ErrorModal(props) {
+  return (
+    <Fragment>
+      {ReactDOM.createPortal(<Backdrop onConfirm={props.onConfirm}/>, document.getElementById('backdrop-root'))}
+      {ReactDOM.createPortal(<ModalOverlay title={props.title} message={props.message} onConfirm={props.onConfirm}/>, document.getElementById('overlay-root'))}
+    </Fragment>
   );
 }
